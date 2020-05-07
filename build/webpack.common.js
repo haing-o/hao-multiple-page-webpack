@@ -1,23 +1,11 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const webpack = require('webpack')
 
 module.exports = {
-  mode: 'development', // 不配置会警告
-  // cheap只精确到行 inline将map文件内嵌在js里 eval更快也内嵌在js里 不新建一个map module还检查第三方loader或者plugin里的错误
-  devtool: 'cheap-module-eval-source-map', // development
-  // devtool: 'cheap-module-source-map', // production
   // 默认的chunk name就是main
   entry: {
     'main': './src/index.js',
-  },
-  devServer: {
-    contentBase: './dist', // 服务器基于什么文件夹运行
-    // open: true, // 自动打开浏览器
-    port: 8090,
-    hot: true, //热更新
-    hotOnly: true //禁止浏览器自动刷新
   },
   module: {
     rules: [
@@ -76,6 +64,7 @@ module.exports = {
             targets: {
               chrome: "67"
             },
+            corejs: "3",
             useBuiltIns: 'usage'
           }]]
         }
@@ -90,17 +79,20 @@ module.exports = {
     }),
     // 默认清空dist文件夹
     new CleanWebpackPlugin(),
-    new webpack.HotModuleReplacementPlugin()
   ],
-  // Tree Shaking 只对ES Module起作用
-  // package.json中的sideEffects可以添加忽略项(不管是否引用都打包)
-  // 测试环境下不会真正删除代码，只会提示 正式环境下才会彻底删除没用到的代码 减少代码量
   optimization: {
-    usedExports: true
+    // code splitting
+    // 代码分割，和webpack无关
+    // webpack中实现代码分配，两种方式
+    // 1.同步代码：只需要webpack.common.js中配置splitChunks
+    // 2.异步代码：无需做任何配置，webpack自动分割
+    splitChunks: {
+      chunks: 'all'
+    }
   },
   output: {
     // publicPath: 'http://cdn.com', // 用于在js文件前加公用前缀
     filename: '[name].js', //[name]代表直接使用入口命名
-    path: path.resolve(__dirname, 'dist') // 默认就是dist文件夹
+    path: path.resolve(__dirname, '../dist') // 默认就是dist文件夹
   }
 }

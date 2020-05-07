@@ -1,7 +1,4 @@
-const arr = [
-  new Promise(() => {}),
-  new Promise(() => {})
-]
-arr.map(item => {
-  console.log(item)
-})
+import _ from 'lodash'
+
+let a = _.join([1,2,3], '***')
+console.log(a)
