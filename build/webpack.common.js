@@ -5,11 +5,15 @@ const webpackMerge = require('webpack-merge')
 const devConfig = require('./webpack.dev')
 const prodConfig = require('./webpack.prod')
 const webpack = require('webpack')
+const utils = require('./utils')
 
 const commonConfig = {
   // 默认的chunk name就是main
   entry: {
     'main': './src/index.js',
+    // 'page1': './src/page1/page1.js',
+    // 'page2': './src/page2/page2.js',
+    ...utils.entries()
   },
   module: {
     rules: [
@@ -52,14 +56,23 @@ const commonConfig = {
   plugins: [
     // 打包结束后自动生成html文件，并引入js
     new HtmlWebpackPlugin({
-      template: 'src/index.html'
+      template: 'src/index.html',
+      filename: 'index.html',
+      chunks: ['main']
     }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/page1/page1.html',
+    //   filename: 'page1/page1.html',
+    //   chunks: ['page1']
+    // }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/page2/page2.html',
+    //   filename: 'page2/page2.html',
+    //   chunks: ['page2']
+    // }),
     // 默认清空dist文件夹
     new CleanWebpackPlugin(),
-    new webpack.ProvidePlugin({
-      $: 'jquery'
-    })
-  ],
+  ].concat(utils.htmlPlugin()),
   optimization: {
     // Tree Shaking 只对ES Module起作用
     // package.json中的sideEffects可以添加忽略项(不管是否引用都打包)
