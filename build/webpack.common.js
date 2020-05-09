@@ -1,8 +1,12 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const webpackMerge = require('webpack-merge')
+const devConfig = require('./webpack.dev')
+const prodConfig = require('./webpack.prod')
+const webpack = require('webpack')
 
-module.exports = {
+const commonConfig = {
   // 默认的chunk name就是main
   entry: {
     'main': './src/index.js',
@@ -29,33 +33,6 @@ module.exports = {
         }
       },
       {
-        test: /\.less$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 2, // 文件内@import引入的另一个样式文件，也要先通过css-loader前的2个loader编译
-              modules: true // 模块化
-            }
-          },
-          'less-loader',
-          'postcss-loader']
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 2, // 文件内@import引入的另一个样式文件，也要先通过css-loader前的2个loader编译
-              modules: true // 模块化
-            }
-          },
-          'postcss-loader']
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: "babel-loader",
@@ -79,8 +56,15 @@ module.exports = {
     }),
     // 默认清空dist文件夹
     new CleanWebpackPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery'
+    })
   ],
   optimization: {
+    // Tree Shaking 只对ES Module起作用
+    // package.json中的sideEffects可以添加忽略项(不管是否引用都打包)
+    // 测试环境下不会真正删除代码，只会提示 正式环境下才会彻底删除没用到的代码 减少代码量
+    usedExports: true,
     // code splitting
     // 代码分割，和webpack无关
     splitChunks: {
@@ -111,7 +95,16 @@ module.exports = {
   },
   output: {
     // publicPath: 'http://cdn.com', // 用于在js文件前加公用前缀
-    filename: '[name].js', //[name]代表直接使用入口命名
+    filename: '[name].js', //[name]代表直接使用入口文件命名
+    chunkFilename: '[name].chunk.js', // 非入口chunk的命名
     path: path.resolve(__dirname, '../dist') // 默认就是dist文件夹
+  }
+}
+
+module.exports = (env) => {
+  if(env && env.production) {
+    return webpackMerge(commonConfig, prodConfig);
+  }else {
+    return webpackMerge(commonConfig, devConfig);
   }
 }

@@ -1,6 +1,4 @@
 const webpack = require('webpack')
-const webpackMerge = require('webpack-merge')
-const commonConfig = require('./webpack.common')
 
 const devConfig = {
   mode: 'development', // 不配置会警告
@@ -14,16 +12,28 @@ const devConfig = {
     hot: true, //热更新
     // hotOnly: true //禁止浏览器自动刷新
   },
+  module: {
+    rules: [
+      {
+        test: /\.less$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2, // 文件内@import引入的另一个样式文件，也要先通过css-loader前的2个loader编译
+              modules: true // 模块化
+            }
+          },
+          'less-loader',
+          'postcss-loader']
+      },
+    ]
+  },
   // plugins可以帮助webpack在某一个时刻做一些事情
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],
-  // Tree Shaking 只对ES Module起作用
-  // package.json中的sideEffects可以添加忽略项(不管是否引用都打包)
-  // 测试环境下不会真正删除代码，只会提示 正式环境下才会彻底删除没用到的代码 减少代码量
-  optimization: {
-    usedExports: true
-  },
 }
 
-module.exports = webpackMerge(commonConfig, devConfig)
+module.exports = devConfig

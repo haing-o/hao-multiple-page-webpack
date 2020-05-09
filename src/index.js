@@ -1,4 +1,5 @@
-import test from './test'
-import _ from 'lodash'
+import './index.less'
 
-console.log(test.name)
+import { ui } from './ui'
+
+ui();
