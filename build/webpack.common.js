@@ -29,7 +29,7 @@ module.exports = {
         }
       },
       {
-        test: /\.scss$/,
+        test: /\.less$/,
         use: [
           'style-loader',
           {
@@ -39,7 +39,7 @@ module.exports = {
               modules: true // 模块化
             }
           },
-          'sass-loader',
+          'less-loader',
           'postcss-loader']
       },
       {
@@ -83,11 +83,30 @@ module.exports = {
   optimization: {
     // code splitting
     // 代码分割，和webpack无关
-    // webpack中实现代码分配，两种方式
-    // 1.同步代码：只需要webpack.common.js中配置splitChunks
-    // 2.异步代码：无需做任何配置，webpack自动分割
     splitChunks: {
-      chunks: 'all'
+      // webpack中实现代码分配，两种方式（将业务逻辑代码和第三方插件代码分割）
+      // 1.同步代码：需要webpack.common.js中配置splitChunks(initial)
+      // 2.异步代码：无需做任何配置，webpack自动分割(async 默认import())
+      chunks: 'all',
+      minSize: 30000, // 30kb 引入文件至少要大于这个值才会拆分
+      minChunks: 1,
+      maxAsyncRequests: 5, // 一个js文件最多引用数量
+      maxInitialRequests: 3, // 入口文件最多引用数量
+      automaticNameDelimiter: '~', // 生成的文件名时使用的分割符
+      name: true, // 使用webpack自动生成的文件名 false时会使用数字
+      // 缓存组 把符合的放在同一个组里
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/, // 是否在node_modules里
+          priority: -10,
+          // filename: 'vendors.js'
+        },
+        default: {
+          priority: -20,
+          reuseExistingChunk: true, // 复用之前打包过的代码，不会重复打包
+          // filename: 'common.js'
+        }
+      }
     }
   },
   output: {
