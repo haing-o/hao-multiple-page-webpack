@@ -108,7 +108,7 @@ const commonConfig = {
   },
   output: {
     // publicPath: 'http://cdn.com', // 用于在js文件前加公用前缀
-    filename: '[name].js', //[name]代表直接使用入口文件命名
+    filename: '[name]/[name].[hash].js', //[name]代表直接使用入口文件命名
     chunkFilename: '[name].chunk.js', // 非入口chunk的命名
     path: path.resolve(__dirname, '../dist') // 默认就是dist文件夹
   }
