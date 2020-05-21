@@ -10,7 +10,7 @@ const utils = require('./utils')
 const commonConfig = {
   // 默认的chunk name就是main
   entry: {
-    'main': './src/index.js',
+    // 'main': './src/index.js',
     // 'page1': './src/page1/page1.js',
     // 'page2': './src/page2/page2.js',
     ...utils.entries()
@@ -55,11 +55,11 @@ const commonConfig = {
   // plugins可以帮助webpack在某一个时刻做一些事情
   plugins: [
     // 打包结束后自动生成html文件，并引入js
-    new HtmlWebpackPlugin({
-      template: 'src/index.html',
-      filename: 'index.html',
-      chunks: ['main']
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: 'src/index.html',
+    //   filename: 'index.html',
+    //   chunks: ['main']
+    // }),
     // new HtmlWebpackPlugin({
     //   template: 'src/page1/page1.html',
     //   filename: 'page1/page1.html',
