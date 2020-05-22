@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // 分离css代码
 const webpackMerge = require('webpack-merge')
 const devConfig = require('./webpack.dev')
 const prodConfig = require('./webpack.prod')
@@ -10,13 +11,11 @@ const utils = require('./utils')
 const commonConfig = {
   // 默认的chunk name就是main
   entry: {
-    // 'main': './src/index.js',
-    // 'page1': './src/page1/page1.js',
-    // 'page2': './src/page2/page2.js',
     ...utils.entries()
   },
   module: {
     rules: [
+      // 入口js文件中出现的才会打包过来
       // file-loader找到文件放到dist文件里并改名
       // url-loader除了有上述功能，还可以把文件打包为base64
       {
@@ -24,8 +23,16 @@ const commonConfig = {
         use: {
           loader: 'url-loader',
           options: {
-            name: '[name]_[hash].[ext]',
-            outputPath: 'images/', // 输出路径
+            name: '[folder]/[name].[ext]',
+            // 输出路径
+            outputPath: (url, resourcePath, context) => {
+              return `images/${url}`;
+            },
+            // 访问资源路径
+            publicPath: (url, resourcePath, context) => {
+              return `${path.relative(context, 'images/').split(path.sep).join('/')}/${url}`;
+            },
+            context: 'src/images',
             limit: 2048 // 小于的打包为base64
           }
         }
@@ -49,7 +56,21 @@ const commonConfig = {
             useBuiltIns: 'usage'
           }]]
         }
-      }
+      },
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 2, // 文件内@import引入的另一个样式文件，也要先通过css-loader前的2个loader编译
+              // modules: true // 模块化-类名会变为hash
+            }
+          },
+          'less-loader',
+          'postcss-loader']
+      },
     ]
   },
   // plugins可以帮助webpack在某一个时刻做一些事情
@@ -60,18 +81,12 @@ const commonConfig = {
     //   filename: 'index.html',
     //   chunks: ['main']
     // }),
-    // new HtmlWebpackPlugin({
-    //   template: 'src/page1/page1.html',
-    //   filename: 'page1/page1.html',
-    //   chunks: ['page1']
-    // }),
-    // new HtmlWebpackPlugin({
-    //   template: 'src/page2/page2.html',
-    //   filename: 'page2/page2.html',
-    //   chunks: ['page2']
-    // }),
     // 默认清空dist文件夹
     new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'pages/[name]/[name].css',
+      chunkFilename: '[name].chunk.css'
+    })
   ].concat(utils.htmlPlugin()),
   optimization: {
     // Tree Shaking 只对ES Module起作用
@@ -108,7 +123,7 @@ const commonConfig = {
   },
   output: {
     // publicPath: 'http://cdn.com', // 用于在js文件前加公用前缀
-    filename: '[name]/[name].[hash].js', //[name]代表直接使用入口文件命名
+    filename: 'pages/[name]/[name].[hash].js', //[name]代表直接使用入口文件命名
     chunkFilename: '[name].chunk.js', // 非入口chunk的命名
     path: path.resolve(__dirname, '../dist') // 默认就是dist文件夹
   }
