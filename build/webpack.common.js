@@ -71,6 +71,12 @@ const commonConfig = {
           'less-loader',
           'postcss-loader']
       },
+      {
+        test: /\.(html)$/,
+        use: {
+          loader: 'html-loader',
+        }
+      }
     ]
   },
   // plugins可以帮助webpack在某一个时刻做一些事情
