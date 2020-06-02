@@ -1,12 +1,10 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin"); // 分离css代码
 const webpackMerge = require('webpack-merge')
 const devConfig = require('./webpack.dev')
 const prodConfig = require('./webpack.prod')
 const webpack = require('webpack')
-const utils = require('./utils')
+const utils = require('./utils') // 多页面输入和输出配置
 
 const commonConfig = {
   // 默认的chunk name就是main
@@ -87,10 +85,8 @@ const commonConfig = {
     //   filename: 'index.html',
     //   chunks: ['main']
     // }),
-    // 默认清空dist文件夹
-    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: 'pages/[name]/[name].css',
+      filename: 'css/[name].css',
       chunkFilename: '[name].chunk.css'
     })
   ].concat(utils.htmlPlugin()),
@@ -129,7 +125,7 @@ const commonConfig = {
   },
   output: {
     // publicPath: 'http://cdn.com', // 用于在js文件前加公用前缀
-    filename: 'pages/[name]/[name].[hash].js', //[name]代表直接使用入口文件命名
+    filename: 'js/[name].[hash].js', //[name]代表直接使用入口文件命名
     chunkFilename: '[name].chunk.js', // 非入口chunk的命名
     path: path.resolve(__dirname, '../dist') // 默认就是dist文件夹
   }
