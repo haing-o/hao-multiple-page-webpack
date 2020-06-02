@@ -30,7 +30,7 @@ exports.htmlPlugin = function() {
           // 文件名称
           filename: 'pages/' + filename + '.html',
           // 页面模板需要加对应的js脚本，如果不加这行则每个页面都会引入所有的js脚本
-          chunks: [filename],
+          chunks: ['import', filename],
           inject: true
         }
         // process.env.NODE_ENV === 'production'

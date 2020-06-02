@@ -9,6 +9,7 @@ const utils = require('./utils') // 多页面输入和输出配置
 const commonConfig = {
   // 默认的chunk name就是main
   entry: {
+    'import': path.resolve(__dirname, '../src/common/js/import.js'),
     ...utils.entries()
   },
   module: {
@@ -85,8 +86,11 @@ const commonConfig = {
     //   filename: 'index.html',
     //   chunks: ['main']
     // }),
+    new webpack.ProvidePlugin({
+      Vue: 'vue/dist/vue.js'
+    }),
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
+      filename: 'css/[name].[hash].css',
       chunkFilename: '[name].chunk.css'
     })
   ].concat(utils.htmlPlugin()),
@@ -113,12 +117,12 @@ const commonConfig = {
         vendors: {
           test: /[\\/]node_modules[\\/]/, // 是否在node_modules里
           priority: -10,
-          // filename: 'vendors.js'
+          filename: 'js/common/[id]vendors.[hash].js'
         },
         default: {
           priority: -20,
           reuseExistingChunk: true, // 复用之前打包过的代码，不会重复打包
-          // filename: 'common.js'
+          filename: 'js/common/[id]bundle.[hash].js'
         }
       }
     }
