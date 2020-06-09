@@ -1,6 +1,6 @@
 ## 目录结构
 #### 编译前（源码)
-```txt
+```
 |-- webpack-demo
     |-- package-lock.json
     |-- package.json
@@ -42,7 +42,7 @@
 ```
 
 #### 编译后(dist文件夹下)
-```txt
+```
 -- css // 结构与html目录结构一致
     |-- import.efa5b9536b07a4db034c.css
     |-- home
