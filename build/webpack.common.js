@@ -18,7 +18,7 @@ const commonConfig = {
       // file-loader找到文件放到dist文件里并改名
       // url-loader除了有上述功能，还可以把文件打包为base64
       {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.(png|jpg|gif|svg)$/,
         use: {
           loader: 'url-loader',
           options: {
@@ -67,8 +67,8 @@ const commonConfig = {
               // modules: true // 模块化-类名会变为hash
             }
           },
-          'less-loader',
-          'postcss-loader']
+          'postcss-loader',
+          'less-loader']
       },
       {
         test: /\.css$/,
@@ -88,6 +88,14 @@ const commonConfig = {
         use: {
           loader: 'html-loader',
         }
+      },
+      {
+        test: require.resolve('../src/common/js/aliplayer/aliplayer-min.js'),
+        loader: 'exports-loader?window.Aliplayer!script-loader'
+      },
+      {
+        test: require.resolve('../src/common/js/aliplayer/aliplayercomponents.js'),
+        loader: 'exports-loader?window.AliPlayerComponent!script-loader'
       }
     ]
   },
@@ -99,12 +107,9 @@ const commonConfig = {
     //   filename: 'index.html',
     //   chunks: ['main']
     // }),
-    new webpack.ProvidePlugin({
-      Vue: 'vue/dist/vue.js'
-    }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].[hash].css',
-      chunkFilename: '[name].chunk.css'
+      chunkFilename: 'css/[name].chunk.css'
     })
   ].concat(utils.htmlPlugin()),
   optimization: {
@@ -124,7 +129,7 @@ const commonConfig = {
       maxAsyncRequests: 5, // 一个js文件最多引用数量
       maxInitialRequests: 3, // 入口文件最多引用数量
       automaticNameDelimiter: '~', // 生成的文件名时使用的分割符
-      name: true, // 使用webpack自动生成的文件名 false时会使用数字
+      name: false, // 使用webpack自动生成的文件名 false时会使用数字
       // 缓存组 把符合的放在同一个组里
       cacheGroups: {
         vendors: {
@@ -142,6 +147,7 @@ const commonConfig = {
   },
   output: {
     // publicPath: 'http://cdn.com', // 用于在js文件前加公用前缀
+    globalObject: 'this',
     filename: 'js/[name].[hash].js', //[name]代表直接使用入口文件命名
     chunkFilename: '[name].chunk.js', // 非入口chunk的命名
     path: path.resolve(__dirname, '../dist') // 默认就是dist文件夹

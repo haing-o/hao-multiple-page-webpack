@@ -13,6 +13,11 @@ exports.entries = ()  => {
   let map = {}
   entryFiles.forEach((filePath) => {
       let filename = filePath.substring(filePath.lastIndexOf('pages/') + 6, filePath.lastIndexOf('.'))
+      let fileArr = filename.split('/');
+      if(fileArr.length>=3) {
+        fileArr.splice(1, 1);
+      }
+      filename = fileArr.join('/');
       map[filename] = filePath
   })
   return map
@@ -24,6 +29,11 @@ exports.htmlPlugin = function() {
     let arr = []
     entryHtml.forEach((filePath) => {
         let filename = filePath.substring(filePath.lastIndexOf('pages/') + 6, filePath.lastIndexOf('.'))
+        let fileArr = filename.split('/');
+        if(fileArr.length>=3) {
+          fileArr.splice(1, 1);
+        }
+        filename = fileArr.join('/');
         let htmlConfig = {
           // 模板来源
           template: filePath,

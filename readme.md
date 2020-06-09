@@ -47,8 +47,7 @@
     |-- import.efa5b9536b07a4db034c.css
     |-- home
     |   |-- home.efa5b9536b07a4db034c.css
-    |   |-- home_subpage
-    |       |-- home_subpage.efa5b9536b07a4db034c.css
+    |   |-- home_subpage.efa5b9536b07a4db034c.css
     |-- page1
         |-- page1.efa5b9536b07a4db034c.css
 -- images  // 结构与编译前源码的目录结构一致
@@ -63,8 +62,7 @@
     |   |-- 7vendors.efa5b9536b07a4db034c.js
     |-- home
     |   |-- home.efa5b9536b07a4db034c.js
-    |   |-- home_subpage
-    |       |-- home_subpage.efa5b9536b07a4db034c.js
+    |   |-- home_subpage.efa5b9536b07a4db034c.js
     |-- page1
     |   |-- page1.efa5b9536b07a4db034c.js
     |-- page2
@@ -72,10 +70,32 @@
 -- pages
     |-- home
     |   |-- home.html
-    |   |-- home_subpage
-    |       |-- home_subpage.html
+    |   |-- home_subpage.html
     |-- page1
     |   |-- page1.html
     |-- page2
         |-- page2.html
 ```
+
+## 默认规则
+1. `Vue`和`axios`都已经配置好了，且在正式环境中使用压缩版。
+2. 不是在`html`文件中通过`<img>`标签引入的图片，都必须使用`require`引入。
+
+## 编写项目注意事项
+#### html文件
+1. 在`html`文件中尽量不要使用`<scirpt>`或者`<link>`标签引入静态资源，统一在目录下同名的`js`文件中使用`import`或`require`引入，方便模块化。
+2. 使用`<img>`标签引入的图片文件，必须使用**相对路径**。
+
+#### 样式文件(css, less)
+1. 目前项目配置只支持`less`,`css`为后缀的样式文件。
+2. 在同名的`js`文件中通过`import`引用。
+
+#### 同名的入口js文件
+1. `js`文件必须与模板`html`文件同名。
+2. 在`js`文件中引用图片必须使用`require`，例如`require('../images/hot.png')`.
+3. 在`js`文件中引用其他`js`文件，必须遵循模块化规则。引用样式文件时，直接引用就可以了。
+4. 第三方插件尽量找到`npm`版本的引入，如果实在找不到，可以通过`exports-loader`和`script-loader`的方式引入第三方插件。（详细案例请点击[webpack 引入未模块化的本地js](https://blog.csdn.net/httguangtt/article/details/106636912))
+
+#### 其他js文件
+1. 如果是自己写的配置文件，例如`config.js`，必须遵循模块化规则，`export`导出某些东西。
+2. 如果是作为一个组件文件，例如`Header.js`，在编写`html`模板遇到图片引入时，必须使用`require`的方式引入图片。（即不是在`html`文件内引入图片时都必须使用`require`）

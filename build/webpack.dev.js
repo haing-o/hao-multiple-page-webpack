@@ -14,7 +14,11 @@ const devConfig = {
   },
   // plugins可以帮助webpack在某一个时刻做一些事情
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.ProvidePlugin({
+      Vue: 'vue/dist/vue.js',
+      axios: 'axios/dist/axios.js',
+    }),
   ],
 }
 
